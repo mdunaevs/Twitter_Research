@@ -11,6 +11,7 @@ import json
 import twitter_col
 import pandas as pd
 import io
+import emoji
 
 
 # In[2]:
@@ -70,7 +71,7 @@ def readFile(filepath, inFile = 'JSON'):
 
 
 # Get words
-categories = ['pronouns', 'absolutist', 'exclusive', 'abusive']
+categories = ['pronouns', 'absolutist', 'exclusive', 'abusive', 'emoji']
 
 def getWords(dictpath = './dicts', langs = ['English']):
     start = time.time()
@@ -132,6 +133,8 @@ def getLanguage(file, lang_dict = './dicts/languages.txt'):
 # In[10]:
 
 
+
+
 # Count words
 
 def getCounts(tweet, wordlist):
@@ -155,12 +158,25 @@ def getCounts(tweet, wordlist):
                 sublist = [x for (x, y) in wordlist[cat] if y == subcat]
                 count = sum([text.count(word) for word in sublist])
                 rowvec.append(count)
+        elif(cat == 'emoji'):
+            count = getEmojiCounts(text)
+            rowvec.append(count)
         else:
             count = sum([text.count(word) for word in wordlist[cat]])
             rowvec.append(count)
 
     return rowvec
 
+
+
+
+def getEmojiCounts(text):
+
+    sublist = [x for x in text if x in emoji.UNICODE_EMOJI]
+
+    return len(sublist)
+
+print(getEmojiCounts('🤔 🙈 me así, bla es se 😌 ds 💕👭👙'))
 
 # In[11]:
 
@@ -207,6 +223,7 @@ def pennebake(filepath, inFile = 'JSON', dictpath = './dicts', langs = ['English
         if(i % 1000 == 0):
             print('Now done with {} tweets out of {} in {:.2f} seconds!'.format(i, df.shape[0], time.time() - start))
 
+<<<<<<< HEAD:pennebaker_reboot_2019-09-06.py
     if (inFile =='JSON'):
         counter['user_id'] = df['user_id']
         counter['status_id'] = df['status_id']
@@ -219,6 +236,17 @@ def pennebake(filepath, inFile = 'JSON', dictpath = './dicts', langs = ['English
         counter = counter[['status_id', 'first', 'second', 'third',
                            'absolutist', 'non-absolutist', 'exclusive', 'abusive',
                            'hashtags']]
+=======
+    if (inFile=='JSON'):
+        counter['user_id'] = df['user_id']
+        counter['status_id'] = df['status_id']
+        counter = counter[['user_id', 'status_id', 'first', 'second', 'third',
+                           'absolutist', 'non-absolutist', 'exclusive', 'abusive']]
+    else:
+        counter['status_id'] = df['status_id']
+        counter = counter[['status_id', 'first', 'second', 'third',
+                           'absolutist', 'non-absolutist', 'exclusive', 'abusive']]
+>>>>>>> maduna/09-09-emoji-implementation:pennebaker_reboot_2019-08-29.py
     print('Finished word counts in {:.2f} seconds!'.format(time.time() - start))
 
     counter['readability'] = [getReadability(x) for x in df['status_text']]
