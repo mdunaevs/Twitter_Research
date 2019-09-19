@@ -8,8 +8,8 @@ import time
 import csv
 import xlrd
 import json
-import twitter_col
-import pandas as pd
+#import twitter_col
+#import pandas as pd
 import emoji
 
 
