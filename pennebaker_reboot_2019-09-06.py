@@ -223,30 +223,18 @@ def pennebake(filepath, inFile = 'JSON', dictpath = './dicts', langs = ['English
         if(i % 1000 == 0):
             print('Now done with {} tweets out of {} in {:.2f} seconds!'.format(i, df.shape[0], time.time() - start))
 
-<<<<<<< HEAD:pennebaker_reboot_2019-09-06.py
     if (inFile =='JSON'):
         counter['user_id'] = df['user_id']
         counter['status_id'] = df['status_id']
         counter = pd.concat([counter[['user_id', 'status_id', 'first', 'second', 'third',
                            'absolutist', 'non-absolutist', 'exclusive', 'abusive',
-                           'hashtags']], df[["language", "links"]]], axis = 1, sort = False)
+                           'hashtags', 'emojis']], df[["language", "links"]]], axis = 1, sort = False)
 
     else:
         counter['status_id'] = df['status_id']
         counter = counter[['status_id', 'first', 'second', 'third',
                            'absolutist', 'non-absolutist', 'exclusive', 'abusive',
-                           'hashtags']]
-=======
-    if (inFile=='JSON'):
-        counter['user_id'] = df['user_id']
-        counter['status_id'] = df['status_id']
-        counter = counter[['user_id', 'status_id', 'first', 'second', 'third',
-                           'absolutist', 'non-absolutist', 'exclusive', 'abusive']]
-    else:
-        counter['status_id'] = df['status_id']
-        counter = counter[['status_id', 'first', 'second', 'third',
-                           'absolutist', 'non-absolutist', 'exclusive', 'abusive']]
->>>>>>> maduna/09-09-emoji-implementation:pennebaker_reboot_2019-08-29.py
+                           'hashtags', 'emojis']]
     print('Finished word counts in {:.2f} seconds!'.format(time.time() - start))
 
     counter['readability'] = [getReadability(x) for x in df['status_text']]
