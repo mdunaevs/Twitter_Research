@@ -84,27 +84,40 @@ def getWords(dictpath = './dicts', langs = ['English']):
         sheet = wb.sheet_by_index(0)
         catCol = -1
 
-        for lang in langs:
-            for i in range(sheet.ncols):
-                if(sheet.cell_value(0, i) == lang):
-                    langCol = i
+        if (cat == "emoji"):
             for i in range(sheet.ncols):
                 if(sheet.cell_value(0, i) == "Category 1"):
                     catCol = i
-
-
+            for i in range(sheet.ncols):
+                if(sheet.cell_value(0, i) == "conceptTo"):
+                    nameCol = i
             if (catCol >= 0):
                 for i in range(1, sheet.nrows):
-                    wordlist[cat].append((sheet.cell_value(i, langCol), sheet.cell_value(i, catCol)))
-            else:
-                for i in range(1, sheet.nrows):
-                    wordlist[cat].append(sheet.cell_value(i, langCol))
+                    wordlist[cat].append((sheet.cell_value(i, nameCol), sheet.cell_value(i, catCol)))
+        else:
+            for lang in langs:
+                for i in range(sheet.ncols):
+                    if(sheet.cell_value(0, i) == lang):
+                        langCol = i
+                for i in range(sheet.ncols):
+                    if(sheet.cell_value(0, i) == "Category 1"):
+                        catCol = i
+
+
+                if (catCol >= 0):
+                    for i in range(1, sheet.nrows):
+                        wordlist[cat].append((sheet.cell_value(i, langCol), sheet.cell_value(i, catCol)))
+                else:
+                    for i in range(1, sheet.nrows):
+                        wordlist[cat].append(sheet.cell_value(i, langCol))
 
     for cat in categories:
         if (cat == 'pronouns'):
             wordlist[cat] = [(x.lower(), y) for (x, y) in wordlist[cat] if x != '']
         elif (cat == 'absolutist'):
             wordlist[cat] = [(x.lower(), y) for (x, y) in wordlist[cat] if x != '']
+        elif(cat == 'emoji'):
+            wordlist[cat] = [(x, y) for (x, y) in wordlist[cat] if x != '']
         else:
             wordlist[cat] = [x.lower() for x in wordlist[cat] if x != '']
 
@@ -159,8 +172,10 @@ def getCounts(tweet, wordlist):
                 count = sum([text.count(word) for word in sublist])
                 rowvec.append(count)
         elif(cat == 'emoji'):
-            count = getEmojiCounts(text)
-            rowvec.append(count)
+            subcatsEmojis = ['good', 'neutral', 'bad']
+            for subcat in subcatsEmojis:
+                count = getEmojiCounts(text, subcat)
+                rowvec.append(count)
         else:
             count = sum([text.count(word) for word in wordlist[cat]])
             rowvec.append(count)
@@ -170,11 +185,11 @@ def getCounts(tweet, wordlist):
 
 
 
-def getEmojiCounts(text):
+def getEmojiCounts(text, subcat):
 
-    sublist = [x for x in text if x in emoji.UNICODE_EMOJI]
+    sublist = [x for (x, y) in text if (emoji.emojize((":" + x + ":") in emoji.UNICODE_EMOJI and y == subcat)]
 
-    return len(sublist)
+    return sum([text.count(emoji) for emoji in sublist])
 
 print(getEmojiCounts('🤔 🙈 me así, bla es se 😌 ds 💕👭👙'))
 
